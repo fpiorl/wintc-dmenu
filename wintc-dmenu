@@ -1,0 +1,29 @@
+#!/bin/bash
+
+WINDOW_SWITCHER="wmctrl -l"
+EXEC_LAUNCHER="dmenu_path"
+WINDOW_PREFIX="\[W\] "
+EXECUTABLE_PREFIX="\[X\] "
+
+get_windows() {
+    $WINDOW_SWITCHER | awk '{$1=$2=$3=""; print "'"$WINDOW_PREFIX"'", $0}'
+}
+
+get_executables() {
+    $EXEC_LAUNCHER | sed "s/^/$EXECUTABLE_PREFIX/"
+}
+SELECTED=$( ( get_windows; get_executables ) | dmenu -i -l 10 -p "Run or Switch:")
+
+if [ -z "$SELECTED" ]; then
+    exit 0
+fi
+
+if echo "$SELECTED" | grep -q "^$WINDOW_PREFIX"; then
+    WINDOW_TITLE=$(echo "$SELECTED" | sed "s/^$WINDOW_PREFIX *//")
+    WINDOW_ID=$(wmctrl -l | grep -F "$WINDOW_TITLE" | head -n 1 | awk '{print $1}')
+
+    wmctrl -i -a "$WINDOW_ID"
+else
+    echo exec "${SELECTED#$EXECUTABLE_PREFIX}" &
+    exec "${SELECTED#$EXECUTABLE_PREFIX}" &
+fi

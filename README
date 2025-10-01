@@ -1,6 +1,10 @@
-dmenu - dynamic menu
+wintc-dmenu
 ====================
-dmenu is an efficient dynamic menu for X.
+
+forked dmenu to make it looks good for [https://github.com/rozniak/xfce-winxp-tc](xfce-winxp-tc)
+
+
+
 
 
 Requirements
